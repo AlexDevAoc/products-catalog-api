@@ -22,6 +22,7 @@ ANON_PASSWORD = os.getenv("ANON_PASSWORD")
 
 ADMIN_USERS = [
     {"email": ADMIN_USER_EMAIL, "first_name": "Admin", "last_name": "One", "password": DEFAULT_ADMIN_PASSWORD},
+    # Feel free to add more admin users here
 ]
 
 
