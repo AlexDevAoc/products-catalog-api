@@ -91,3 +91,17 @@ def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depen
         logging.error(f"Failed to create user session for user {user.id}: {e}")
     token = create_access_token(user.email, user.id, timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES)))
     return models.Token(access_token=token, token_type='bearer')
+
+
+def anonymous_access_token(db: Session) -> models.Token:
+    # Email defined in seed
+    anon_email = "anonymous@example.com"
+    user = db.query(User).filter(User.email == anon_email).first()
+    if not user:
+        raise AuthenticationError()
+    try:
+        session_service.create_session(db, user.id, is_anonymous=True)
+    except Exception as e:
+        logging.error(f"Failed to create anonymous session: {e}")
+    token = create_access_token(user.email, user.id, timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES)))
+    return models.Token(access_token=token, token_type='bearer')

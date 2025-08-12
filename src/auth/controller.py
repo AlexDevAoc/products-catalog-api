@@ -5,6 +5,7 @@ from . import  models
 from . import service
 from fastapi.security import OAuth2PasswordRequestForm
 from ..database.core import DbSession
+from sqlalchemy.orm import Session
 
 router = APIRouter(
     prefix='/auth',
@@ -22,6 +23,11 @@ async def register_user(db: DbSession,
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                                  db: DbSession):
     return service.login_for_access_token(form_data, db)
+
+
+@router.post("/anonymous/token", response_model=models.Token)
+async def anonymous_access_token(db: DbSession):
+    return service.anonymous_access_token(db)
 
 
 

@@ -14,6 +14,10 @@ ANON_ROLE_NAME = "anonymous"
 FULL_ACCESS_PERMISSION = "FULL_ACCESS"
 READ_PRODUCTS_PERMISSION = "READ_PRODUCTS"
 DEFAULT_ADMIN_PASSWORD = "Admin123!"
+ANON_EMAIL = os.getenv("ANON_EMAIL")
+ANON_FIRST_NAME = "Anon"
+ANON_LAST_NAME = "User"
+ANON_PASSWORD = os.getenv("ANON_PASSWORD")
 
 ADMIN_USERS = [
     {"email": "admin1@example.com", "first_name": "Admin", "last_name": "One", "password": DEFAULT_ADMIN_PASSWORD},
@@ -86,6 +90,22 @@ def seed():
             if not user_role:
                 db.add(UserRole(user_id=user.id, role_id=admin_role.id))
                 db.commit()
+        # Anonymous user (single shared)
+        anon_user = db.query(User).filter(User.email == ANON_EMAIL).first()
+        if not anon_user:
+            anon_user = User(
+                email=ANON_EMAIL,
+                first_name=ANON_FIRST_NAME,
+                last_name=ANON_LAST_NAME,
+                password=get_password_hash(ANON_PASSWORD)
+            )
+            db.add(anon_user)
+            db.commit(); db.refresh(anon_user)
+            logging.info("Created anonymous user")
+        anon_user_role = db.query(UserRole).filter(UserRole.user_id == anon_user.id).first()
+        if not anon_user_role:
+            db.add(UserRole(user_id=anon_user.id, role_id=anon_role.id))
+            db.commit()
         logging.info("Seed process completed.")
     except Exception as e:
         logging.error(f"Seeding failed: {e}")
