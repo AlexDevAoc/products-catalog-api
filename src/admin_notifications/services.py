@@ -20,6 +20,7 @@ def to_response(db: Session, notif: AdminNotification) -> models.AdminNotificati
     return models.AdminNotificationResponse(
         id=notif.id,
         change_log_id=notif.change_log_id,
+        user_change_log_id=getattr(notif, 'user_change_log_id', None),
         sent_to=notif.sent_to,
         sent_to_email=user.email if user else None,
         status=status.name if status else "UNKNOWN",
@@ -39,6 +40,7 @@ def enrich(db: Session, notifs: List[AdminNotification]) -> List[models.AdminNot
     return [models.AdminNotificationResponse(
         id=n.id,
         change_log_id=n.change_log_id,
+        user_change_log_id=getattr(n, 'user_change_log_id', None),
         sent_to=n.sent_to,
         sent_to_email=user_lookup.get(n.sent_to),
         status=status_lookup.get(n.status_id, "UNKNOWN"),
