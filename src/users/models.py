@@ -8,6 +8,13 @@ class UserResponse(BaseModel):
     last_name: str
 
 
+class UserUpdate(BaseModel):
+    first_name: str | None = None
+    last_name: str | None = None
+    email: EmailStr | None = None
+    status: bool | None = None
+
+
 class PasswordChange(BaseModel):
     current_password: str
     new_password: str
