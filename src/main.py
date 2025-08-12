@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from .database.core import engine, Base
 
-from .entities.user import User  # Import models to register them
+from . import entities  # noqa: F401 ensure all models imported
 from .api import register_routes
 from .logging import configure_logging, LogLevels
 from .seed import seed
