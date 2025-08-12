@@ -14,9 +14,7 @@ class User(Base):
     status = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
 
-    # created_products = relationship("Product", back_populates="creator")
-    # product_changes = relationship("ProductChangeLog", back_populates="admin_user")
-    # sessions = relationship("UserSession", back_populates="user")
+    sessions = relationship("UserSession", back_populates="user")
     change_logs = relationship("UserChangeLog", 
                                 foreign_keys="[UserChangeLog.user_id]", 
                                 back_populates="user")

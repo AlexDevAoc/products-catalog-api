@@ -12,6 +12,7 @@ from ..exceptions import AuthenticationError
 import logging
 import os
 from dotenv import load_dotenv
+from src.user_sessions import services as session_service
 
 load_dotenv()
 
@@ -84,5 +85,9 @@ def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depen
     user = authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise AuthenticationError()
+    try:
+        session_service.create_session(db, user.id, is_anonymous=False)
+    except Exception as e:
+        logging.error(f"Failed to create user session for user {user.id}: {e}")
     token = create_access_token(user.email, user.id, timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES)))
     return models.Token(access_token=token, token_type='bearer')
