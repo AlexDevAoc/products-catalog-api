@@ -5,6 +5,7 @@ from src.entities.user import User
 from src.exceptions import UserNotFoundError, InvalidPasswordError, PasswordMismatchError
 from src.auth.service import verify_password, get_password_hash, CurrentUser
 from src.user_change_logs import services as change_log_service
+from src.notifications.services import send_admin_notifications_for_user_change
 import logging
 
 def get_users(db: Session) -> list[models.UserResponse]:
@@ -35,8 +36,9 @@ def change_password(db: Session, user_id: int, password_change: models.PasswordC
         
         user.password = get_password_hash(password_change.new_password)
         db.commit()
+        logs = []
         try:
-            change_log_service.log_user_change(
+            log = change_log_service.log_user_change(
                 db=db,
                 user_id=user_id,
                 changed_by=user_id,
@@ -45,8 +47,11 @@ def change_password(db: Session, user_id: int, password_change: models.PasswordC
                 old_value="***",
                 new_value="***"
             )
+            logs.append(log)
         except Exception as le:
             logging.error(f"Failed to log password change for user {user_id}: {le}")
+        if logs:
+            send_admin_notifications_for_user_change(db, logs)
         logging.info(f"Successfully changed password for user ID: {user_id}")
     except Exception as e:
         logging.error(f"Error during password change for user ID: {user_id}. Error: {str(e)}")
@@ -96,12 +101,13 @@ def _update_user_email(db: Session, user: User, update_in: models.UserUpdate) ->
         user.email = update_in.email
 
 def _log_user_changes(db: Session, target_user_id: int, changed_by: int, before: dict, after: dict) -> None:
+    logs = []
     for field, old_val in before.items():
         new_val = after[field]
         if old_val == new_val:
             continue
         try:
-            change_log_service.log_user_change(
+            log = change_log_service.log_user_change(
                 db=db,
                 user_id=target_user_id,
                 changed_by=changed_by,
@@ -110,8 +116,11 @@ def _log_user_changes(db: Session, target_user_id: int, changed_by: int, before:
                 old_value=str(old_val) if old_val is not None else None,
                 new_value=str(new_val) if new_val is not None else None,
             )
+            logs.append(log)
         except Exception as le:
             logging.error(f"Failed to log user update for user {target_user_id}: {le}")
+    if logs:
+        send_admin_notifications_for_user_change(db, logs)
 
 
 def soft_delete_user(db: Session, target_user_id: int, admin_user: CurrentUser) -> None:
@@ -123,8 +132,9 @@ def soft_delete_user(db: Session, target_user_id: int, admin_user: CurrentUser) 
     old_status = user.status
     user.status = False
     db.commit()
+    logs = []
     try:
-        change_log_service.log_user_change(
+        log = change_log_service.log_user_change(
             db=db,
             user_id=target_user_id,
             changed_by=admin_user.user_id,
@@ -133,5 +143,8 @@ def soft_delete_user(db: Session, target_user_id: int, admin_user: CurrentUser) 
             old_value=str(old_status),
             new_value=str(user.status),
         )
+        logs.append(log)
     except Exception as le:
         logging.error(f"Failed to log user soft delete for user {target_user_id}: {le}")
+    if logs:
+        send_admin_notifications_for_user_change(db, logs)

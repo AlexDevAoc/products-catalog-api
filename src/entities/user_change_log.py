@@ -18,3 +18,4 @@ class UserChangeLog(Base):
     user = relationship("User", foreign_keys=[user_id], back_populates="change_logs")
     changed_by_user = relationship("User", foreign_keys=[changed_by], back_populates="changes_made")
     action = relationship("ActionStatus", back_populates="user_changes")
+    admin_notifications = relationship("AdminNotification", back_populates="user_change_log")
