@@ -21,6 +21,7 @@ class User(Base):
     changes_made = relationship("UserChangeLog", 
                                 foreign_keys="[UserChangeLog.changed_by]", 
                                 back_populates="changed_by_user")
+    products = relationship("Product", back_populates="creator")
     
     def __repr__(self):
         return f"<User(email='{self.email}', first_name='{self.first_name}', last_name='{self.last_name}')>"
