@@ -13,17 +13,15 @@ ADMIN_ROLE_NAME = "admin"
 ANON_ROLE_NAME = "anonymous"
 FULL_ACCESS_PERMISSION = "FULL_ACCESS"
 READ_PRODUCTS_PERMISSION = "READ_PRODUCTS"
-DEFAULT_ADMIN_PASSWORD = "Admin123!"
+ADMIN_USER_EMAIL = os.getenv("ADMIN_USER_EMAIL")
+DEFAULT_ADMIN_PASSWORD = os.getenv("DEFAULT_ADMIN_PASSWORD")
 ANON_EMAIL = os.getenv("ANON_EMAIL")
 ANON_FIRST_NAME = "Anon"
 ANON_LAST_NAME = "User"
 ANON_PASSWORD = os.getenv("ANON_PASSWORD")
 
 ADMIN_USERS = [
-    {"email": "admin1@example.com", "first_name": "Admin", "last_name": "One", "password": DEFAULT_ADMIN_PASSWORD},
-    {"email": "admin2@example.com", "first_name": "Admin", "last_name": "Two", "password": DEFAULT_ADMIN_PASSWORD},
-    {"email": "admin3@example.com", "first_name": "Admin", "last_name": "Three", "password": DEFAULT_ADMIN_PASSWORD},
-    {"email": "admin4@example.com", "first_name": "Admin", "last_name": "Four", "password": DEFAULT_ADMIN_PASSWORD},
+    {"email": ADMIN_USER_EMAIL, "first_name": "Admin", "last_name": "One", "password": DEFAULT_ADMIN_PASSWORD},
 ]
 
 
