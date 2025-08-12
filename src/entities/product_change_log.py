@@ -19,3 +19,4 @@ class ProductChangeLog(Base):
     product = relationship("Product", back_populates="change_logs")
     changed_by_user = relationship("User")
     action = relationship("ActionStatus", back_populates="product_changes")
+    admin_notifications = relationship("AdminNotification", back_populates="change_log")

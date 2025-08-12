@@ -6,7 +6,10 @@ from src.entities.product import Product
 from src.entities.product_change_log import ProductChangeLog
 from src.entities.action_status import ActionStatus
 from src.entities.user import User
+
+from src.notifications.services import send_admin_notifications_for_product_change
 from . import models
+
 
 
 def get_or_create_action(db: Session, name: str, description: str = "") -> ActionStatus:
@@ -38,13 +41,19 @@ def log_product_change(db: Session, product_id: int, changed_by: int, action_nam
     return log
 
 
-def diff_and_log(db: Session, product: Product, data_before: Dict[str, Any], data_after: Dict[str, Any], user_id: int, action_name: str = "UPDATE"):
+def diff_and_log(db: Session, product: Product, data_before: Dict[str, Any], data_after: Dict[str, Any], user_id: int, action_name: str = "UPDATE") -> list[ProductChangeLog]:
+    
+    created: list[ProductChangeLog] = []
     for field, old_val in data_before.items():
         if field not in data_after:
             continue
         new_val = data_after[field]
         if old_val != new_val:
-            log_product_change(db, product.id, user_id, action_name, field, str(old_val) if old_val is not None else None, str(new_val) if new_val is not None else None)
+            log = log_product_change(db, product.id, user_id, action_name, field, str(old_val) if old_val is not None else None, str(new_val) if new_val is not None else None)
+            created.append(log)
+    if created:
+        send_admin_notifications_for_product_change(db, created)
+    return created
 
 
 def list_logs_by_product(db: Session, product_id: int) -> List[ProductChangeLog]:
