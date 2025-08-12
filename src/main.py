@@ -13,7 +13,7 @@ configure_logging(LogLevels.info)
 """ Only uncomment below to create new tables, 
 otherwise the tests will fail if not connected
 """
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 
 @asynccontextmanager
