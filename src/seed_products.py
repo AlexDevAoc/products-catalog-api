@@ -7,8 +7,6 @@ from .entities.user import User
 from .entities.role import Role
 from .entities.user_role import UserRole
 
-# DEFAULT_CREATOR_EMAIL = os.getenv("SEED_PRODUCTS_CREATOR")
-
 PRODUCTS_BATCH = [
     {"sku": "PILLOW-AIR-1", "name": "Almohada AirFlow", "description": "Ventilación avanzada", "price": 28.90, "brand": "DreamRest"},
     {"sku": "PILLOW-GEL-1", "name": "Almohada Gel Fresh", "description": "Capa gel refrescante", "price": 34.50, "brand": "ComfortPlus"},
