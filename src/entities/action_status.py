@@ -11,5 +11,5 @@ class ActionStatus(Base):
     description = Column(String(50), nullable=False)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
 
-    # product_changes = relationship("ProductChangeLog", back_populates="action")
+    product_changes = relationship("ProductChangeLog", back_populates="action")
     user_changes = relationship("UserChangeLog", back_populates="action")

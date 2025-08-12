@@ -8,6 +8,7 @@ from src.user_sessions.controller import router as user_sessions_router
 from src.brands.controller import router as brands_router
 from src.products.controller import router as products_router
 from src.product_views.controller import router as product_views_router
+from src.product_change_logs.controller import router as product_change_logs_router
 
 def register_routes(app: FastAPI):
     app.include_router(auth_router)
@@ -19,3 +20,4 @@ def register_routes(app: FastAPI):
     app.include_router(brands_router)
     app.include_router(products_router)
     app.include_router(product_views_router)
+    app.include_router(product_change_logs_router)

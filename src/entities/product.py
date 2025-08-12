@@ -19,3 +19,4 @@ class Product(Base):
     brand = relationship("Brand", back_populates="products")
     creator = relationship("User", back_populates="products")
     views = relationship("ProductView", back_populates="product", uselist=False)
+    change_logs = relationship("ProductChangeLog", back_populates="product")

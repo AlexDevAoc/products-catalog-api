@@ -6,6 +6,7 @@ from src.entities.brand import Brand
 from src.entities.user import User
 from ..roles.services import get_user_role, ANONYMOUS_ROLE
 from ..product_views import services as pv_services
+from ..product_change_logs import services as pcl_services
 
 
 def list_products(db: Session, user_id: int):
@@ -52,6 +53,14 @@ def create_product(db: Session, product_in: models.ProductCreate, creator_id: in
 
 def update_product(db: Session, product_id: int, product_in: models.ProductUpdate, user_id: int) -> Product:
     product = get_product(db, product_id, user_id)
+    before = {
+        "name": product.name,
+        "sku": product.sku,
+        "description": product.description,
+        "price": str(product.price),
+        "brand_id": product.brand_id,
+        "status": product.status,
+    }
     if product_in.name is not None and product_in.name != product.name:
         if db.query(Product).filter(Product.name == product_in.name).first():
             raise HTTPException(status_code=400, detail="Product name already exists")
@@ -71,10 +80,22 @@ def update_product(db: Session, product_id: int, product_in: models.ProductUpdat
     if product_in.status is not None:
         product.status = product_in.status
     db.commit(); db.refresh(product)
+    after = {
+        "name": product.name,
+        "sku": product.sku,
+        "description": product.description,
+        "price": str(product.price),
+        "brand_id": product.brand_id,
+        "status": product.status,
+    }
+    pcl_services.diff_and_log(db, product, before, after, user_id, action_name="UPDATE_PRODUCT")
     return product
 
 
 def soft_delete_product(db: Session, product_id: int, user_id: int) -> None:
     product = get_product(db, product_id, user_id)
+    before = {"status": product.status}
     product.status = False
-    db.commit()
+    db.commit(); db.refresh(product)
+    after = {"status": product.status}
+    pcl_services.diff_and_log(db, product, before, after, user_id, action_name="DELETE_PRODUCT")
