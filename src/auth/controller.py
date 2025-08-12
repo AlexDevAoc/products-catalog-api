@@ -8,7 +8,7 @@ from ..database.core import DbSession
 
 router = APIRouter(
     prefix='/auth',
-    tags=['auth']
+    tags=['Auth']
 )
 
 
