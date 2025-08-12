@@ -6,6 +6,7 @@ from .entities.user import User  # Import models to register them
 from .api import register_routes
 from .logging import configure_logging, LogLevels
 from .seed import seed
+from .seed_products import seed_products
 
 configure_logging(LogLevels.info)
 
@@ -19,6 +20,7 @@ Base.metadata.create_all(bind=engine)
 async def lifespan(app: FastAPI):
     # Startup logic
     seed()
+    seed_products()
     yield
     # Shutdown logic (add if needed)
 
