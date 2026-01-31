@@ -48,7 +48,7 @@ uvicorn src.main:app --reload
 
 ### Instalación (usando requirements.txt)
 ```bash
-python -m venv .venv
+python3 -m venv .venv 
 source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn src.main:app --reload
@@ -153,10 +153,6 @@ pytest -q -p no:warnings=false
 - Tests de notificaciones admin (mock SendGrid / desactivar envío real).
 - Tests de permisos/roles (accesos denegados vs permitidos).
 - Medir cobertura y apuntar a >85% en módulos críticos (auth, products, users).
-
-
-
-*(Pendiente agregar suites de tests para auditoría y notificaciones.)*
 
 ### Licencia
 MIT
