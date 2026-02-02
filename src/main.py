@@ -24,6 +24,10 @@ async def lifespan(app: FastAPI):
     yield
     # Shutdown logic (add if needed)
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    title="Products Catalog API",
+    description="API for managing a products catalog. For more info clone repository and check README.md",
+    version="1.0.0",    
+    lifespan=lifespan)
 
 register_routes(app)
